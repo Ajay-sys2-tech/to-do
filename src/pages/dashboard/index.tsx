@@ -10,6 +10,7 @@ import { useSession, signOut } from 'next-auth/react';
 
 const Dashboard = () => {
   const { data: session } = useSession();
+  console.log(session);
   const router = useRouter();
 
   useEffect(() => {

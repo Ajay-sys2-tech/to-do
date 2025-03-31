@@ -31,6 +31,7 @@ export default function TaskForm() {
       assignedTo: userData ? userData[0].name : '',
       priority: priorityList[0] ,
       status: statusList[0],
+      createdBy: session?.user.id
   })
    
     // Handle input changes
@@ -60,7 +61,15 @@ export default function TaskForm() {
             if (!response) {
                 throw new Error('Failed to create the task. Please try again.')
             }
-
+            setTaskData({
+              title: '',
+              description: '',
+              deadline: '',
+              assignedTo: userData ? userData[0].name : '',
+              priority: priorityList[0] ,
+              status: statusList[0],
+              createdBy: session?.user?.id
+          })
             console.log('Task created:', response)
         } catch (error: any) {
         setError(error.message)

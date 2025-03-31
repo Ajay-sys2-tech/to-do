@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { Task, PrismaClient } from "@prisma/client";
-import { getSession } from 'next-auth/react'; 
+// import { getSession } from 'next-auth/react'; 
+import { Context } from '~/server/context';
 const prisma = new PrismaClient()
 
 export const taskRouter = createTRPCRouter({
@@ -15,11 +16,18 @@ export const taskRouter = createTRPCRouter({
         assignedTo: z.string(z.string()).optional(), // Assuming it's an array of userIds or usernames
         priority: z.enum(["HIGH", "MEDIUM", "LOW"]),
         status: z.enum(["BACKLOG", "TO_DO", "IN_PROGRESS", "IN_REVIEW", "COMPLETED"]),
+        createdBy: z.string().min(1),
         })
     )
     .mutation(async ({ ctx, input }): Promise<Task>  => {
-    // const createdBy = ctx.session.user.id;  // Example: get user ID from session (replace with your actual logic)
-    const createdBy = "cm8rqf5pe0000527zcvd3y9z8";
+      // if (!ctx.session?.user?.id) {
+      //   throw new Error('User not authenticated');
+      // }
+
+      // // Access the authenticated user ID from session
+      // const createdBy = ctx.session.user.id; 
+      console.log("------------------------------\n", input);
+    // const createdBy = "cm8x0jde70000u9pd8sm7b1dl";
     
     return (await ctx.db.task.create({
       data: {
@@ -29,7 +37,7 @@ export const taskRouter = createTRPCRouter({
         assignedTo: input.assignedTo ,  // Default to an empty array if not provided
         priority: input.priority,
         status: input.status,
-        createdBy,  // Attach the user who created the task
+        createdBy: input.createdBy,  // Attach the user who created the task
       },
     }));
 
