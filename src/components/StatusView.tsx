@@ -35,7 +35,7 @@ const StatusView: React.FC<StatusViewProps> = ({ tasks }) => {
         <tbody>
           <tr>
             {["BACKLOG", "TO_DO", "IN_PROGRESS", "IN_REVIEW", "COMPLETED"].map((status) => (
-              <td key={status} className="px-4 py-2">
+              <td key={status} className="px-4 py-2 align-top">
                 {statusGroups[status]?.map((task) => (
                   <TaskCard key={task.id} taskData={task} status={false} />
                 ))}

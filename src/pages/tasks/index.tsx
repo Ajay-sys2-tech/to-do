@@ -1,42 +1,45 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useState, FormEvent, useEffect } from 'react';
 import { api } from "~/utils/api";
 import { type Task } from "@prisma/client";
+import {useRouter} from 'next/router';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function TaskForm() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  
+    useEffect(() => {
+      if (!session) {
+        void router.push("/login");
+      }
+    }, [])
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
-    const [taskData, setTaskData] = useState({
-        title: '',
-        description: '',
-        deadline: '',
-        assignedTo: [] as string[],
-        priority: 'LOW',
-        status: 'BACKLOG',
-    })
+    
 
     const statusList = ["BACKLOG", "TO_DO", "IN_PROGRESS", "IN_REVIEW", "COMPLETED"];
     const priorityList = ["HIGH", "MEDIUM", "LOW"];
 
     const { mutateAsync: createTask } = api.task.createTask.useMutation();
     const {data: userData} = api.user.getUsers.useQuery(); 
+    console.log(userData);
+    const [taskData, setTaskData] = useState({
+      title: '',
+      description: '',
+      deadline: '',
+      assignedTo: userData ? userData[0].name : '',
+      priority: priorityList[0] ,
+      status: statusList[0],
+  })
    
     // Handle input changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target
-        if (name === 'assignedTo') {
-            const assigneeList = [value];
-        setTaskData((prevState) => ({
-            ...prevState,
-            [name]: assigneeList
-        }))
-        } else {
         setTaskData((prevState) => ({
             ...prevState,
             [name]: value,
         }))
-        }
-        console.log(taskData);
     }
 
     // Handle form submission
@@ -66,10 +69,27 @@ export default function TaskForm() {
         setIsLoading(false)
         }
     }
+    
+    const handleGoToDashboard = () => {
+      router.push('/dashboard')
+    }
 
   return (
     <div className="max-w-4xl mx-auto mt-4 p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-bold text-gray-700 mb-6">Create a New Task</h2>
+      {/* <h2 className="text-2xl font-bold text-gray-700 mb-6">Create a New Task</h2> */}
+      <header className="max-w-7xl mx-auto p-6 flex justify-between">
+            <h1 className="text-3xl font-bold mb-6 text-center">Create a New Task</h1>
+            
+            <div className="flex justify-center mb-6">
+            <button 
+                    onClick={handleGoToDashboard} 
+                    className="mx-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                    Dashboard
+                </button>
+                
+            </div>
+        </header>
+    
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="flex flex-col md:flex-row md:space-x-4">
@@ -119,7 +139,7 @@ export default function TaskForm() {
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             >
                 {
-                    userData.map((user) => (
+                    userData?.map((user) => (
                         <option key={user.id} value={user.name}>{user.name}</option>
                     ))
                 }

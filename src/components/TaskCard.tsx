@@ -47,7 +47,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ taskData, status }) => {
   return (
     <div className={`p-4 mt-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-all ${getShadowColor()} `}>
       <h3 className="font-semibold text-lg text-gray-700">{taskData.title}</h3>
-      <p className="text-sm text-gray-500">Assigned to: {taskData.assignedTo.join(", ")}</p>
+      <p className="text-sm text-gray-500">Assigned to: {taskData.assignedTo}</p>
       <p className="text-sm text-gray-400">Deadline: {new Date(taskData.deadline).toLocaleDateString()}</p>
       {status ? (
         <div className={`mt-2 py-1 px-3 rounded-lg ${getStatusColor(taskData.status).boxColor}`}>

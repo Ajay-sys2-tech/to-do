@@ -34,7 +34,7 @@ const PriorityView: React.FC<PriorityViewProps> = ({ tasks }) => {
         <tbody>
           <tr>
             {["LOW", "MEDIUM", "HIGH"].map((priority) => (
-              <td key={priority} className="px-4 py-2">
+              <td key={priority} className="px-4 py-2 align-top">
                 {priorityGroups[priority]?.map((task) => (
                   <TaskCard key={task.id} taskData={task} status={true} />
                 ))}
