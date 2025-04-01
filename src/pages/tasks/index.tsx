@@ -1,8 +1,33 @@
-import React, { useState, FormEvent, useEffect } from 'react';
+import React, { useState, type FormEvent, useEffect } from 'react';
 import { api } from "~/utils/api";
 import { type Task } from "@prisma/client";
 import {useRouter} from 'next/router';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import type { AnyARecord } from 'dns';
+
+type TaskData = {
+  title: string;
+  description: string;
+  deadline: Date;
+  assignedTo: string ;
+  priority: TaskPriority ;
+  status: TaskStatus  ; 
+  createdBy: string ;
+};
+
+enum TaskStatus {
+  BACKLOG = "BACKLOG",
+  TO_DO = "TO_DO",
+  IN_PROGRESS = "IN_PROGRESS",
+  IN_REVIEW = "IN_REVIEW",
+  COMPLETED = "COMPLETED",
+}
+
+enum TaskPriority {
+  HIGH = "HIGH",
+  MEDIUM = "MEDIUM",
+  LOW = "LOW",
+}
 
 export default function TaskForm() {
   const router = useRouter();
@@ -15,7 +40,7 @@ export default function TaskForm() {
     }, [])
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [error, setError] = useState<string | null>(null)
+    const [error, setError] = useState<string >('')
     
 
     const statusList = ["BACKLOG", "TO_DO", "IN_PROGRESS", "IN_REVIEW", "COMPLETED"];
@@ -23,15 +48,16 @@ export default function TaskForm() {
 
     const { mutateAsync: createTask } = api.task.createTask.useMutation();
     const {data: userData} = api.user.getUsers.useQuery(); 
-    console.log(userData);
-    const [taskData, setTaskData] = useState({
+   
+    const [taskData, setTaskData] = useState<TaskData>({
       title: '',
       description: '',
-      deadline: '',
-      assignedTo: userData ? userData[0].name : '',
-      priority: priorityList[0] ,
-      status: statusList[0],
-      createdBy: session?.user.id
+      deadline: new Date(),
+      // deadline: '',
+      assignedTo: userData?.[0]?.name ?? '',
+      priority: TaskPriority.LOW,
+      status: TaskStatus.BACKLOG,
+      createdBy: session?.user.id ?? ''
   })
    
     // Handle input changes
@@ -47,7 +73,7 @@ export default function TaskForm() {
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
         setIsLoading(true)
-        setError(null) 
+        setError('') 
 
         try {
             const dataToSend = {
@@ -55,7 +81,7 @@ export default function TaskForm() {
                 deadline: taskData.deadline ? new Date(taskData.deadline) : null, // Convert to Date or set null if empty
               }
             console.log(dataToSend);
-            const response: Task = await createTask(dataToSend);
+            const response: Task = await createTask(dataToSend as TaskData);
             
             console.log(response);
             if (!response) {
@@ -64,23 +90,24 @@ export default function TaskForm() {
             setTaskData({
               title: '',
               description: '',
-              deadline: '',
-              assignedTo: userData ? userData[0].name : '',
-              priority: priorityList[0] ,
-              status: statusList[0],
-              createdBy: session?.user?.id
+              deadline: new Date(),
+              assignedTo: userData?.[0]?.name ?? '',
+              priority: TaskPriority.LOW,
+              status: TaskStatus.BACKLOG,
+              createdBy: session?.user.id ?? ''
           })
             console.log('Task created:', response)
-        } catch (error: any) {
-        setError(error.message)
-        console.error(error)
+        } catch (error) {
+          if(error instanceof Error)
+            setError(error.message)
+          console.error(error)
         } finally {
         setIsLoading(false)
         }
     }
     
     const handleGoToDashboard = () => {
-      router.push('/dashboard')
+      void router.push('/dashboard')
     }
 
   return (
@@ -132,7 +159,7 @@ export default function TaskForm() {
             <input
               type="date"
               name="deadline"
-              value={taskData.deadline}
+              // value={taskData.deadline}
               onChange={handleChange}
               required
               className="mt-1 p-2 border border-gray-300 rounded-md w-full"
@@ -149,7 +176,7 @@ export default function TaskForm() {
             >
                 {
                     userData?.map((user) => (
-                        <option key={user.id} value={user.name}>{user.name}</option>
+                        <option key={user.id} value={user.name ?? ''}>{user.name}</option>
                     ))
                 }
             </select>

@@ -4,17 +4,17 @@ import { type Task } from "@prisma/client";
 import TaskCard from "./TaskCard";
 
 interface StatusViewProps {
-  tasks: Task[];
+  tasks: Task[] | undefined;
 }
 
 const StatusView: React.FC<StatusViewProps> = ({ tasks }) => {
   // Group tasks by their status
-  const groupByStatus = (tasks: Task[]) => {
-    return tasks.reduce((groups, task) => {
+  const groupByStatus = (tasks: Task[] | undefined):Record<string, Task[]> | undefined => {
+    return tasks?.reduce((groups, task) => {
       if (!groups[task.status]) {
         groups[task.status] = [];
       }
-      groups[task.status].push(task);
+      groups?.[task.status]?.push(task);
       return groups;
     }, {} as Record<string, Task[]>);
   };
@@ -36,7 +36,7 @@ const StatusView: React.FC<StatusViewProps> = ({ tasks }) => {
           <tr>
             {["BACKLOG", "TO_DO", "IN_PROGRESS", "IN_REVIEW", "COMPLETED"].map((status) => (
               <td key={status} className="px-4 py-2 align-top">
-                {statusGroups[status]?.map((task) => (
+                {statusGroups?.[status]?.map((task) => (
                   <TaskCard key={task.id} taskData={task} status={false} />
                 ))}
               </td>

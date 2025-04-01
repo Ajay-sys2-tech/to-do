@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { User, PrismaClient } from "@prisma/client";
+import { type User, PrismaClient } from "@prisma/client";
 
 export const userRouter = createTRPCRouter({
 
@@ -11,7 +11,7 @@ export const userRouter = createTRPCRouter({
             // orderBy: { createdAt: "desc" },
         });
     
-        return users ?? null;
+        return users ?? [];
     }),
     
 });

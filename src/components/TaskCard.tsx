@@ -36,7 +36,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ taskData, status }) => {
     }
   };
 
-  const getShadowColor = (): String => {
+  const getShadowColor = (): string => {
    return status ? getStatusColor(taskData.status).shadowColor : getPriorityColor(taskData.priority).shadowColor;
   };
 

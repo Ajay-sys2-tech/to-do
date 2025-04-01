@@ -22,7 +22,7 @@ export default function Login() {
     if (result?.error) {
       setError(result.error);
     } else {
-      router.push("/dashboard");
+      void router.push("/dashboard");
     }
   };
 
@@ -86,7 +86,7 @@ export default function Login() {
         </form>
         <div className="text-center">
           <Link href="/register" className="text-sm text-indigo-600 hover:text-indigo-500">
-            Don't have an account? Register
+            Don&apos;t have an account? Register
           </Link>
         </div>
       </div>

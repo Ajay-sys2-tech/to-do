@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { Task, PrismaClient } from "@prisma/client";
+import {type Task, PrismaClient } from "@prisma/client";
 // import { getSession } from 'next-auth/react'; 
-import { Context } from '~/server/context';
-const prisma = new PrismaClient()
+// import { Context } from '~/server/context';
+// const prisma = new PrismaClient()
 
 export const taskRouter = createTRPCRouter({
 
@@ -13,8 +13,11 @@ export const taskRouter = createTRPCRouter({
         title: z.string().min(1),
         description: z.string().min(1),
         deadline: z.date(),
-        assignedTo: z.string(z.string()).optional(), // Assuming it's an array of userIds or usernames
+        // deadline: z.string(),
+        assignedTo: z.string(), 
+        // priority: z.string(),
         priority: z.enum(["HIGH", "MEDIUM", "LOW"]),
+        // status: z.string(),
         status: z.enum(["BACKLOG", "TO_DO", "IN_PROGRESS", "IN_REVIEW", "COMPLETED"]),
         createdBy: z.string().min(1),
         })
@@ -45,11 +48,11 @@ export const taskRouter = createTRPCRouter({
 
 
     getTasks: publicProcedure.query(async ({ ctx }): Promise<Task[]>  => {
-        const post = await ctx.db.task.findMany({
+        const tasks = await ctx.db.task.findMany({
         orderBy: { createdAt: "desc" },
         });
     
-        return post ?? null;
+        return tasks ?? [];
     }),
     
 });

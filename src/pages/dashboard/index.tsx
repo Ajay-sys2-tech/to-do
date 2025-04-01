@@ -33,7 +33,7 @@ const Dashboard = () => {
   }
 
   const handleCreateTask = () => {
-    router.push('/tasks');
+    void router.push('/tasks');
   };
 
   return (

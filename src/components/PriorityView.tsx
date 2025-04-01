@@ -4,17 +4,17 @@ import { type Task } from "@prisma/client";
 import TaskCard from "./TaskCard";
 
 interface PriorityViewProps {
-  tasks: Task[];
+  tasks: Task[] | undefined;
 }
 
 const PriorityView: React.FC<PriorityViewProps> = ({ tasks }) => {
   // Group tasks by their priority
-  const groupByPriority = (tasks: Task[]) => {
-    return tasks.reduce((groups, task) => {
+  const groupByPriority = (tasks: Task[] | undefined): Record<string, Task[]> | undefined => {
+    return tasks?.reduce((groups, task) => {
       if (!groups[task.priority]) {
         groups[task.priority] = [];
       }
-      groups[task.priority].push(task);
+      groups?.[task.priority]?.push(task);
       return groups;
     }, {} as Record<string, Task[]>);
   };
@@ -35,7 +35,7 @@ const PriorityView: React.FC<PriorityViewProps> = ({ tasks }) => {
           <tr>
             {["LOW", "MEDIUM", "HIGH"].map((priority) => (
               <td key={priority} className="px-4 py-2 align-top">
-                {priorityGroups[priority]?.map((task) => (
+                {priorityGroups?.[priority]?.map((task) => (
                   <TaskCard key={task.id} taskData={task} status={true} />
                 ))}
               </td>

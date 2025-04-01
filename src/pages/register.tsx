@@ -17,9 +17,13 @@ export default function Register() {
 
     try {
       await register({ email, password, name });
-      router.push("/login");
-    } catch (err) {
-      setError(err.message);
+      void router.push("/login");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message); 
+      } else {
+        setError("An unknown error occurred"); 
+      }
     }
   };
 
