@@ -41,8 +41,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ taskData, status }) => {
   };
 
   console.log(getShadowColor());
-  const statusClass = status ? taskData.status : taskData.priority;
-  const isStatusView = !status;
+  // const statusClass = status ? taskData.status : taskData.priority;
+  // const isStatusView = !status;
 
   return (
     <div className={`p-4 mt-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-all ${getShadowColor()} `}>

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import {type Task, PrismaClient } from "@prisma/client";
+import {type Task } from "@prisma/client";
 // import { getSession } from 'next-auth/react'; 
 // import { Context } from '~/server/context';
 // const prisma = new PrismaClient()

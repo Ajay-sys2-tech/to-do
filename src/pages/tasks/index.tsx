@@ -3,7 +3,7 @@ import { api } from "~/utils/api";
 import { type Task } from "@prisma/client";
 import {useRouter} from 'next/router';
 import { useSession } from 'next-auth/react';
-import type { AnyARecord } from 'dns';
+// import type { AnyARecord } from 'dns';
 
 type TaskData = {
   title: string;
@@ -37,7 +37,7 @@ export default function TaskForm() {
       if (!session) {
         void router.push("/login");
       }
-    }, [])
+    }, [session, router]);
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [error, setError] = useState<string >('')

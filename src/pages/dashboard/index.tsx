@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { api } from "~/utils/api"; // Adjust according to your tRPC setup
 import StatusView from "~/components/StatusView";
 import PriorityView from "~/components/PriorityView";
-import { type Task } from "@prisma/client";  
+// import { type Task } from "@prisma/client";  
 import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/react';
 
@@ -17,7 +17,7 @@ const Dashboard = () => {
     if (!session) {
       void router.push("/login");
     }
-  }, [])
+  }, [session, router]);
 
   const [viewType, setViewType] = useState<"status" | "priority">("status");
 

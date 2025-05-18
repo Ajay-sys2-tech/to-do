@@ -1,6 +1,6 @@
 import { type AppType } from "next/app";
 import { Geist } from "next/font/google";
-import type { AppProps } from "next/app";
+// import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { type Session } from "next-auth";
 
